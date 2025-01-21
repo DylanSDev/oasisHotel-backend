@@ -1,6 +1,6 @@
 import mongoose, { Schema } from "mongoose";
 
-const habitacionSchema = new mongoose.Schema({
+const habitacionSchema = new Schema({
   number: {
     type: Number,
     required: true,
@@ -36,6 +36,6 @@ const habitacionSchema = new mongoose.Schema({
   },
 });
 
-const Habitacion = mongoose.model("Habitacion", habitacionSchema);
+const Habitacion = mongoose.model("habitacion", habitacionSchema);
 
-module.exports = Habitacion;
+export default Habitacion;
