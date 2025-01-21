@@ -2,11 +2,23 @@
   "name": "oasishotel-backend",
   "version": "1.0.0",
   "main": "index.js",
+  "type": "module",
   "scripts": {
-    "start": "node index.js"
+    "start": "node index.js",
+    "dev": "nodemon --exec node index.js"
   },
-  "keywords":  ["hotel", "backend", "reservas", "API", "Node.js", "Express"],
+  "keywords": [
+    "hotel",
+    "backend",
+    "reservas",
+    "API",
+    "Node.js",
+    "Express"
+  ],
   "author": "DylanSDev",
   "license": "MIT",
-  "description": "Backend del proyecto Oasis Hotel, desarrollado con Node.js y Express. Incluye funcionalidades para la gestión de usuarios, reservas y habitaciones."
+  "description": "Backend del proyecto Oasis Hotel, desarrollado con Node.js y Express. Incluye funcionalidades para la gestión de usuarios, reservas y habitaciones.",
+  "dependencies": {
+    "express": "^4.21.2"
+  }
 }
