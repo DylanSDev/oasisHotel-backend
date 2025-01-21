@@ -2,6 +2,8 @@ import express from "express";
 import "dotenv/config";
 import cors from "cors";
 import morgan from "morgan";
+import path, { dirname } from "path";
+import { fileURLToPath } from "url";
 
 const app = express();
 
@@ -14,10 +16,14 @@ app.listen(app.get("port"), () => {
 //2 - Configuramos middlewares
 app.use(cors()); //Obtenemos conexiones remotas
 app.use(morgan("dev")); //Me dará información extra en la terminal
-//Faltan agregar middlewares
+app.use(express.json()); //Interpreta los datos en formato JSON
+app.use(express.urlencoded({ extended: true })); //Interpreta datos del body del request
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+app.use(express.static(path.join(__dirname, "/public")));
 
 //3 - Configuramos las rutas
-app.get("/", (req, res) => {
+app.get("/nuevo", (req, res) => {
   console.log("procesando una solicitud get");
   res.send("Respuesta del backend loquito");
 });
