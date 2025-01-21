@@ -1,0 +1,12 @@
+{
+  "name": "oasishotel-backend",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords":  ["hotel", "backend", "reservas", "API", "Node.js", "Express"],
+  "author": "DylanSDev",
+  "license": "MIT",
+  "description": "Backend del proyecto Oasis Hotel, desarrollado con Node.js y Express. Incluye funcionalidades para la gestión de usuarios, reservas y habitaciones."
+}
