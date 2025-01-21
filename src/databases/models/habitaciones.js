@@ -15,6 +15,7 @@ const habitacionSchema = new Schema({
   price: {
     type: Number,
     required: true,
+    enum: [1050, 1550, 3050, 2550, 2050],
   },
   startDate: {
     type: Date,
