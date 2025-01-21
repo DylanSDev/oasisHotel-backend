@@ -19,6 +19,9 @@
   "license": "MIT",
   "description": "Backend del proyecto Oasis Hotel, desarrollado con Node.js y Express. Incluye funcionalidades para la gestión de usuarios, reservas y habitaciones.",
   "dependencies": {
-    "express": "^4.21.2"
+    "cors": "^2.8.5",
+    "dotenv": "^16.4.7",
+    "express": "^4.21.2",
+    "morgan": "^1.10.0"
   }
 }
