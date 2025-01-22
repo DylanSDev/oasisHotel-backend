@@ -1,6 +1,7 @@
 import Habitacion from "../databases/models/habitaciones.js";
 import cloudinary from "../config/cloudinaryConfig.js";
 import { Readable } from "stream";
+import moment from "moment-timezone";
 
 export const listarHabitaciones = async (req, res) => {
   try {
@@ -39,13 +40,21 @@ export const crearHabitacion = async (req, res) => {
       Readable.from(req.file.buffer).pipe(upload);
     });
 
-    // Crear una nueva habitación con la URL de Cloudinary
+    // Convertir las fechas a la zona horaria de Buenos Aires (Argentina)
+    const startDateLocal = moment
+      .tz(startDate, "America/Argentina/Buenos_Aires")
+      .toDate();
+    const endDateLocal = moment
+      .tz(endDate, "America/Argentina/Buenos_Aires")
+      .toDate();
+
+    // Crear una nueva habitación con las fechas convertidas a la zona horaria local
     const nuevaHabitacion = new Habitacion({
       number,
       type,
       price,
-      startDate,
-      endDate,
+      startDate: startDateLocal,
+      endDate: endDateLocal,
       image: result.secure_url, // Guardar la URL de la imagen
     });
 
