@@ -51,3 +51,51 @@ export const crearUsuario = async (req, res) => {
       .json({ message: "Error al crear el usuario", error: error.message });
   }
 };
+
+export const eliminarUsuario = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const usuario = await Usuario.findById(id);
+
+    if (!usuario) {
+      return res.status(404).json({ message: "Usuario no encontrado" });
+    }
+
+    await Usuario.deleteOne({ _id: id });
+
+    res.status(200).json({ message: "Usuario eliminado exitosamente" });
+  } catch (error) {
+    res
+      .status(500)
+      .json({ message: "Error al eliminar el usuario", error: error.message });
+  }
+};
+
+export const suspenderUsuario = async (req, res) => {
+  try {
+    const { id } = req.params; // El ID del usuario a suspender se pasa en la URL
+
+    // Buscar al usuario por ID
+    const usuario = await Usuario.findById(id);
+
+    if (!usuario) {
+      return res.status(404).json({ message: "Usuario no encontrado" });
+    }
+
+    // Cambiar el estado del usuario a 'suspendido'
+    usuario.state = "suspendido";
+
+    // Guardar los cambios en la base de datos
+    await usuario.save();
+
+    // Enviar respuesta
+    res
+      .status(200)
+      .json({ message: "Usuario suspendido exitosamente", usuario });
+  } catch (error) {
+    // En caso de error, enviar un mensaje de error
+    res
+      .status(500)
+      .json({ message: "Error al suspender el usuario", error: error.message });
+  }
+};

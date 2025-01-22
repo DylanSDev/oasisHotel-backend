@@ -19,7 +19,7 @@ const usuarioSchema = new Schema(
       maxlength: 35,
     },
     phone: {
-      type: Number,
+      type: String,
       required: true,
       trim: true,
       match: [/^\d{10,}$/], // Acepta 10 o más dígitos
