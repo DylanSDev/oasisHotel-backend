@@ -1,7 +1,6 @@
 import Habitacion from "../databases/models/habitaciones.js";
 import cloudinary from "../config/cloudinaryConfig.js";
 import { Readable } from "stream";
-import moment from "moment-timezone";
 
 export const listarHabitaciones = async (req, res) => {
   try {
@@ -22,6 +21,14 @@ export const listarHabitaciones = async (req, res) => {
 export const crearHabitacion = async (req, res) => {
   try {
     const { number, type, price, startDate, endDate } = req.body;
+    const habitacionExistente = await Habitacion.findOne({ number });
+
+    //Si ya hay una habitacion con ese numero
+    if (habitacionExistente) {
+      return res
+        .status(400)
+        .json({ message: "El número de habitación ya existe." });
+    }
 
     if (!req.file) {
       return res.status(400).json({ message: "Por favor, sube una imagen." });
@@ -39,14 +46,6 @@ export const crearHabitacion = async (req, res) => {
 
       Readable.from(req.file.buffer).pipe(upload);
     });
-
-    // Convertir las fechas a la zona horaria de Buenos Aires (Argentina)
-    const startDateLocal = moment
-      .tz(startDate, "America/Argentina/Buenos_Aires")
-      .toDate();
-    const endDateLocal = moment
-      .tz(endDate, "America/Argentina/Buenos_Aires")
-      .toDate();
 
     // Crear una nueva habitación con las fechas convertidas a la zona horaria local
     const nuevaHabitacion = new Habitacion({
@@ -134,11 +133,13 @@ export const editarHabitacion = async (req, res) => {
     }
 
     res.status(200).json({
+      succes: true,
       message: "Habitación editada exitosamente.",
       habitacion: habitacionEditada,
     });
   } catch (error) {
     res.status(500).json({
+      succes: false,
       message: "Error al editar la habitación.",
       error: error.message,
     });
