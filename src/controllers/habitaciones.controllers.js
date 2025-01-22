@@ -47,3 +47,26 @@ export const crearHabitacion = async (req, res) => {
     });
   }
 };
+
+export const eliminarHabitacion = async (req, res) => {
+  try {
+    const { id } = req.params; // Obtenemos el id de los parámetros de la ruta
+
+    // Intentamos encontrar y eliminar la habitación por su id
+    const habitacionEliminada = await Habitacion.findByIdAndDelete(id);
+
+    if (!habitacionEliminada) {
+      return res.status(404).json({ mensaje: "Habitación no encontrada" });
+    }
+
+    return res.status(200).json({
+      mensaje: "Habitación eliminada con éxito",
+      habitacion: habitacionEliminada,
+    });
+  } catch (error) {
+    return res.status(500).json({
+      mensaje: "Error al eliminar la habitación",
+      error: error.message,
+    });
+  }
+};
