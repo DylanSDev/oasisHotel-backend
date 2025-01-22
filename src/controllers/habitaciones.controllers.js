@@ -1,4 +1,6 @@
 import Habitacion from "../databases/models/habitaciones.js";
+import cloudinary from "../config/cloudinaryConfig.js";
+import { Readable } from "stream";
 
 export const listarHabitaciones = async (req, res) => {
   try {
@@ -18,29 +20,42 @@ export const listarHabitaciones = async (req, res) => {
 
 export const crearHabitacion = async (req, res) => {
   try {
-    // Extraer los datos del cuerpo de la solicitud
-    const { number, type, price, startDate, endDate, image } = req.body;
+    const { number, type, price, startDate, endDate } = req.body;
 
-    // Crear una nueva instancia del modelo
+    if (!req.file) {
+      return res.status(400).json({ message: "Por favor, sube una imagen." });
+    }
+
+    // Subir la imagen a Cloudinary
+    const result = await new Promise((resolve, reject) => {
+      const upload = cloudinary.uploader.upload_stream(
+        { folder: "oasis/habitaciones" },
+        (error, result) => {
+          if (error) return reject(error);
+          resolve(result);
+        }
+      );
+
+      Readable.from(req.file.buffer).pipe(upload);
+    });
+
+    // Crear una nueva habitación con la URL de Cloudinary
     const nuevaHabitacion = new Habitacion({
       number,
       type,
       price,
       startDate,
       endDate,
-      image,
+      image: result.secure_url, // Guardar la URL de la imagen
     });
 
-    // Guardar la habitación en la base de datos
     const habitacionGuardada = await nuevaHabitacion.save();
 
-    // Enviar respuesta exitosa
     res.status(201).json({
       message: "Habitación creada exitosamente.",
       habitacion: habitacionGuardada,
     });
   } catch (error) {
-    // Manejo de errores
     res.status(500).json({
       message: "Error al crear la habitación.",
       error: error.message,
@@ -73,39 +88,50 @@ export const eliminarHabitacion = async (req, res) => {
 
 export const editarHabitacion = async (req, res) => {
   try {
-    const { id } = req.params; // Obtén el id de los parámetros de la ruta
-    const { number, type, price, startDate, endDate, image } = req.body; // Campos a actualizar
+    const { id } = req.params;
+    const { number, type, price, startDate, endDate } = req.body;
 
-    // Define un objeto con los nuevos valores (puedes agregar validaciones si es necesario)
-    const updatedHabitacion = {
-      number,
-      type,
-      price,
-      startDate,
-      endDate,
-      image,
-    };
+    const updatedHabitacion = { number, type, price, startDate, endDate };
 
-    // Encuentra y actualiza la habitación por su ID
+    // Si se envía un archivo nuevo, súbelo a Cloudinary
+    if (req.file) {
+      const result = await new Promise((resolve, reject) => {
+        const upload = cloudinary.uploader.upload_stream(
+          { folder: "oasis/habitaciones" },
+          (error, result) => {
+            if (error) return reject(error);
+            resolve(result);
+          }
+        );
+
+        Readable.from(req.file.buffer).pipe(upload);
+      });
+
+      // Agregar la nueva URL de la imagen al objeto de actualización
+      updatedHabitacion.image = result.secure_url;
+    }
+
+    // Actualizar la habitación en la base de datos
     const habitacionEditada = await Habitacion.findByIdAndUpdate(
       id,
       updatedHabitacion,
-      { new: true }
+      {
+        new: true, // Devuelve el documento actualizado
+      }
     );
 
-    // Si no se encuentra la habitación, responde con un error
     if (!habitacionEditada) {
-      return res.status(404).json({ mensaje: "Habitación no encontrada" });
+      return res.status(404).json({ message: "Habitación no encontrada." });
     }
 
-    // Devuelve la habitación actualizada
-    return res.status(200).json({
-      mensaje: "Habitación editada con éxito",
+    res.status(200).json({
+      message: "Habitación editada exitosamente.",
       habitacion: habitacionEditada,
     });
   } catch (error) {
-    return res
-      .status(500)
-      .json({ mensaje: "Error al editar la habitación", error: error.message });
+    res.status(500).json({
+      message: "Error al editar la habitación.",
+      error: error.message,
+    });
   }
 };

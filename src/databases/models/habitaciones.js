@@ -34,6 +34,10 @@ const habitacionSchema = new Schema({
   image: {
     type: String,
     required: true,
+    match: [
+      /^(https?:\/\/.*\.(?:png|jpg|jpeg))$/,
+      "Por favor, ingresa una URL válida que termine en .png, .jpg o .jpeg.",
+    ],
   },
 });
 

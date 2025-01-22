@@ -1,17 +1,23 @@
-import { Router } from "express";
+import express from "express";
 import {
-  crearHabitacion,
-  editarHabitacion,
-  eliminarHabitacion,
   listarHabitaciones,
+  crearHabitacion,
+  eliminarHabitacion,
+  editarHabitacion,
 } from "../controllers/habitaciones.controllers.js";
+import upload from "../middlewares/upload.js";
 
-const router = Router();
+const router = express.Router();
 
-//Como crear las rutas
-router.route("/habitaciones").get(listarHabitaciones).post(crearHabitacion);
+// Rutas para habitaciones
+router
+  .route("/habitaciones")
+  .get(listarHabitaciones)
+  .post(upload.single("image"), crearHabitacion);
+
 router
   .route("/habitaciones/:id")
   .delete(eliminarHabitacion)
-  .put(editarHabitacion);
+  .put(upload.single("image"), editarHabitacion);
+
 export default router;
