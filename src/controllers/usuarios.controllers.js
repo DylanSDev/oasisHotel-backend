@@ -19,7 +19,6 @@ export const crearUsuario = async (req, res) => {
   try {
     const { name, email, phone, password, state, role } = req.body;
 
-    // Verificar hay un usuario con el mismo email
     const usuarioExistente = await Usuario.findOne({ email: email });
     if (usuarioExistente) {
       return res
@@ -27,7 +26,6 @@ export const crearUsuario = async (req, res) => {
         .json({ message: "Ya existe un usuario con ese correo electrónico." });
     }
 
-    // Crear un nuevo usuario
     const nuevoUsuario = new Usuario({
       name,
       email,
@@ -37,15 +35,12 @@ export const crearUsuario = async (req, res) => {
       role,
     });
 
-    // Guardar el usuario en la base de datos
     await nuevoUsuario.save();
 
-    // Enviar respuesta con el usuario creado
     res
       .status(201)
       .json({ message: "Usuario creado exitosamente", usuario: nuevoUsuario });
   } catch (error) {
-    // En caso de error, enviar un mensaje de error
     res
       .status(500)
       .json({ message: "Error al crear el usuario", error: error.message });
@@ -73,29 +68,54 @@ export const eliminarUsuario = async (req, res) => {
 
 export const suspenderUsuario = async (req, res) => {
   try {
-    const { id } = req.params; // El ID del usuario a suspender se pasa en la URL
+    const { id } = req.params;
 
-    // Buscar al usuario por ID
     const usuario = await Usuario.findById(id);
 
     if (!usuario) {
       return res.status(404).json({ message: "Usuario no encontrado" });
     }
 
-    // Cambiar el estado del usuario a 'suspendido'
     usuario.state = "suspendido";
 
-    // Guardar los cambios en la base de datos
     await usuario.save();
 
-    // Enviar respuesta
     res
       .status(200)
       .json({ message: "Usuario suspendido exitosamente", usuario });
   } catch (error) {
-    // En caso de error, enviar un mensaje de error
     res
       .status(500)
       .json({ message: "Error al suspender el usuario", error: error.message });
+  }
+};
+
+export const editarUsuario = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { name, email, phone, password, state, role } = req.body;
+
+    const usuario = await Usuario.findById(id);
+
+    if (!usuario) {
+      return res.status(404).json({ message: "Usuario no encontrado" });
+    }
+
+    if (name) usuario.name = name;
+    if (email) usuario.email = email;
+    if (phone) usuario.phone = phone;
+    if (password) usuario.password = password;
+    if (state) usuario.state = state;
+    if (role) usuario.role = role;
+
+    await usuario.save();
+
+    res
+      .status(200)
+      .json({ message: "Usuario actualizado exitosamente", usuario });
+  } catch (error) {
+    res
+      .status(500)
+      .json({ message: "Error al editar el usuario", error: error.message });
   }
 };
