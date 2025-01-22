@@ -70,3 +70,42 @@ export const eliminarHabitacion = async (req, res) => {
     });
   }
 };
+
+export const editarHabitacion = async (req, res) => {
+  try {
+    const { id } = req.params; // Obtén el id de los parámetros de la ruta
+    const { number, type, price, startDate, endDate, image } = req.body; // Campos a actualizar
+
+    // Define un objeto con los nuevos valores (puedes agregar validaciones si es necesario)
+    const updatedHabitacion = {
+      number,
+      type,
+      price,
+      startDate,
+      endDate,
+      image,
+    };
+
+    // Encuentra y actualiza la habitación por su ID
+    const habitacionEditada = await Habitacion.findByIdAndUpdate(
+      id,
+      updatedHabitacion,
+      { new: true }
+    );
+
+    // Si no se encuentra la habitación, responde con un error
+    if (!habitacionEditada) {
+      return res.status(404).json({ mensaje: "Habitación no encontrada" });
+    }
+
+    // Devuelve la habitación actualizada
+    return res.status(200).json({
+      mensaje: "Habitación editada con éxito",
+      habitacion: habitacionEditada,
+    });
+  } catch (error) {
+    return res
+      .status(500)
+      .json({ mensaje: "Error al editar la habitación", error: error.message });
+  }
+};
