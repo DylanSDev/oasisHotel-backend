@@ -47,13 +47,13 @@ export const crearHabitacion = async (req, res) => {
       Readable.from(req.file.buffer).pipe(upload);
     });
 
-    // Crear una nueva habitación con las fechas convertidas a la zona horaria local
+    // Crear una nueva habitación
     const nuevaHabitacion = new Habitacion({
       number,
       type,
       price,
-      startDate: startDateLocal,
-      endDate: endDateLocal,
+      startDate,
+      endDate,
       image: result.secure_url, // Guardar la URL de la imagen
     });
 
