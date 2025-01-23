@@ -69,6 +69,19 @@ export const crearReserva = async (req, res) => {
     const fechaCheckIn = new Date(checkIn);
     const fechaCheckOut = new Date(checkOut);
 
+    // Validación adicional: fechas dentro del rango de disponibilidad
+    const habitacionesConRango = await Habitacion.find({
+      type: type,
+      startDate: { $lte: fechaCheckIn },
+      endDate: { $gte: fechaCheckOut },
+    });
+
+    if (habitacionesConRango.length === 0) {
+      return res.status(404).json({
+        message: `No hay habitaciones disponibles del tipo ${type} dentro del rango de disponibilidad.`,
+      });
+    }
+
     // Buscar habitaciones disponibles del tipo solicitado
     const habitacionesDisponibles = await Habitacion.find({
       type: type,
@@ -157,6 +170,19 @@ export const verificarDisponibilidad = async (req, res) => {
     // Convertir las fechas de string a objetos Date
     const fechaCheckIn = new Date(checkIn);
     const fechaCheckOut = new Date(checkOut);
+
+    // Validación adicional: fechas dentro del rango de disponibilidad
+    const habitacionesConRango = await Habitacion.find({
+      type: type,
+      startDate: { $lte: fechaCheckIn },
+      endDate: { $gte: fechaCheckOut },
+    });
+
+    if (habitacionesConRango.length === 0) {
+      return res.status(404).json({
+        message: `No hay habitaciones disponibles del tipo ${type} dentro del rango de disponibilidad.`,
+      });
+    }
 
     // Buscar habitaciones disponibles del tipo solicitado
     const habitacionesDisponibles = await Habitacion.find({
