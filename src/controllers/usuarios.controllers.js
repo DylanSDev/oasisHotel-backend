@@ -93,7 +93,7 @@ export const suspenderUsuario = async (req, res) => {
 export const editarUsuario = async (req, res) => {
   try {
     const { id } = req.params;
-    const { name, email, phone, password, state, role } = req.body;
+    const { name, email, phone, state, role } = req.body;
 
     const usuario = await Usuario.findById(id);
 
@@ -104,7 +104,6 @@ export const editarUsuario = async (req, res) => {
     if (name) usuario.name = name;
     if (email) usuario.email = email;
     if (phone) usuario.phone = phone;
-    if (password) usuario.password = password;
     if (state) usuario.state = state;
     if (role) usuario.role = role;
 
