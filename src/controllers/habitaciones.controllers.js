@@ -1,4 +1,5 @@
 import Habitacion from "../databases/models/habitaciones.js";
+import Usuario from "../databases/models/usuarios.js";
 import cloudinary from "../config/cloudinaryConfig.js";
 import { Readable } from "stream";
 
@@ -21,6 +22,23 @@ export const listarHabitaciones = async (req, res) => {
 export const crearHabitacion = async (req, res) => {
   try {
     const { number, type, price, startDate, endDate } = req.body;
+    const email = req.userEmail;
+
+    // Necesitamos buscar en Usuarios si el email le pertenece a un administrador
+    const administradorBuscado = await Usuario.findOne({ email });
+
+    if (!administradorBuscado) {
+      return res
+        .status(404)
+        .json({ message: "Usuario no encontrado. Acceso no autorizado." });
+    }
+
+    if (administradorBuscado.role !== "administrador") {
+      return res
+        .status(401)
+        .json({ message: "El usuario no tiene permisos para esta acción." });
+    }
+
     const habitacionExistente = await Habitacion.findOne({ number });
 
     //Si ya hay una habitacion con ese numero
