@@ -52,12 +52,34 @@ export const crearUsuario = async (req, res) => {
 };
 
 export const eliminarUsuario = async (req, res) => {
+  // Necesitamos buscar en Usuarios si el email le pertenece a un administrador
+  const email = req.userEmail;
+  const administradorBuscado = await Usuario.findOne({ email });
+
+  if (!administradorBuscado) {
+    return res
+      .status(404)
+      .json({ message: "Usuario no encontrado. Acceso no autorizado." });
+  }
+
+  if (administradorBuscado.role !== "admin") {
+    return res
+      .status(401)
+      .json({ message: "El usuario no tiene permisos para esta acción." });
+  }
+
   try {
     const { id } = req.params;
     const usuario = await Usuario.findById(id);
 
     if (!usuario) {
       return res.status(404).json({ message: "Usuario no encontrado" });
+    }
+
+    if (usuario.role === "admin") {
+      return res
+        .status(404)
+        .json({ message: "No se puede eliminar un usuario administrador." });
     }
 
     await Usuario.deleteOne({ _id: id });
@@ -71,6 +93,21 @@ export const eliminarUsuario = async (req, res) => {
 };
 
 export const suspenderUsuario = async (req, res) => {
+  // Necesitamos buscar en Usuarios si el email le pertenece a un administrador
+  const email = req.userEmail;
+  const administradorBuscado = await Usuario.findOne({ email });
+
+  if (!administradorBuscado) {
+    return res
+      .status(404)
+      .json({ message: "Usuario no encontrado. Acceso no autorizado." });
+  }
+
+  if (administradorBuscado.role !== "admin") {
+    return res
+      .status(401)
+      .json({ message: "El usuario no tiene permisos para esta acción." });
+  }
   try {
     const { id } = req.params;
 
@@ -78,6 +115,12 @@ export const suspenderUsuario = async (req, res) => {
 
     if (!usuario) {
       return res.status(404).json({ message: "Usuario no encontrado" });
+    }
+
+    if (usuario.role === "admin") {
+      return res
+        .status(404)
+        .json({ message: "No se puede suspender a un usuario administrador." });
     }
 
     usuario.state = "suspendido";
@@ -95,6 +138,21 @@ export const suspenderUsuario = async (req, res) => {
 };
 
 export const editarUsuario = async (req, res) => {
+  // Necesitamos buscar en Usuarios si el email le pertenece a un administrador
+  const email = req.userEmail;
+  const administradorBuscado = await Usuario.findOne({ email });
+
+  if (!administradorBuscado) {
+    return res
+      .status(404)
+      .json({ message: "Usuario no encontrado. Acceso no autorizado." });
+  }
+
+  if (administradorBuscado.role !== "admin") {
+    return res
+      .status(401)
+      .json({ message: "El usuario no tiene permisos para esta acción." });
+  }
   try {
     const { id } = req.params;
     const { name, email, phone } = req.body;
@@ -145,6 +203,10 @@ export const login = async (req, res) => {
 
     if (!passwordValido) {
       return res.status(401).json({ message: "Correo o password incorrecto." });
+    }
+
+    if (usuarioBuscado.state !== "activo") {
+      return res.status(401).json({ message: "Usuario suspendido." });
     }
 
     //Generamos el token con jwt

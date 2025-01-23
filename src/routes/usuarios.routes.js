@@ -7,6 +7,7 @@ import {
   editarUsuario,
   login,
 } from "../controllers/usuarios.controllers.js";
+import validarJWT from "../helpers/validarJWT.js";
 import validacionUsuarioCrear from "../helpers/validacionUsuarioCrear.js";
 import validacionUsuarioEditar from "../helpers/validacionUsuarioEditar.js";
 
@@ -19,8 +20,8 @@ router
   .post(validacionUsuarioCrear, crearUsuario);
 router
   .route("/usuarios/:id")
-  .delete(eliminarUsuario)
-  .put(validacionUsuarioEditar, editarUsuario);
-router.route("/usuarios/:id/suspend").put(suspenderUsuario);
+  .delete(validarJWT, eliminarUsuario)
+  .put([validarJWT, validacionUsuarioEditar], editarUsuario);
+router.route("/usuarios/:id/suspend").put(validarJWT, suspenderUsuario);
 router.route("/usuarios/login").post(login);
 export default router;
