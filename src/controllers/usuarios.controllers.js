@@ -17,7 +17,7 @@ export const listarUsuarios = async (req, res) => {
 
 export const crearUsuario = async (req, res) => {
   try {
-    const { name, email, phone, password, state, role } = req.body;
+    const { name, email, phone, password } = req.body;
 
     const usuarioExistente = await Usuario.findOne({ email: email });
     if (usuarioExistente) {
@@ -31,8 +31,6 @@ export const crearUsuario = async (req, res) => {
       email,
       phone,
       password,
-      state,
-      role,
     });
 
     await nuevoUsuario.save();
