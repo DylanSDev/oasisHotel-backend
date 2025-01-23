@@ -29,7 +29,6 @@ const usuarioSchema = new Schema(
       type: String,
       required: true,
       minlength: 6,
-      maxlength: 30,
     },
     state: {
       type: String,

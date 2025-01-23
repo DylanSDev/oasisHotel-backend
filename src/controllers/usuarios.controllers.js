@@ -1,4 +1,5 @@
 import Usuario from "../databases/models/usuarios.js";
+import bcrypt, { hash } from "bcrypt";
 
 export const listarUsuarios = async (req, res) => {
   try {
@@ -32,6 +33,10 @@ export const crearUsuario = async (req, res) => {
       phone,
       password,
     });
+
+    //Generamos el hash con bcrypt
+    const salt = bcrypt.genSaltSync(10);
+    nuevoUsuario.password = bcrypt.hashSync(password, salt);
 
     await nuevoUsuario.save();
 
