@@ -6,6 +6,7 @@ import path from "path";
 import { fileURLToPath } from "url";
 import habitacionesRouter from "./src/routes/habitaciones.routes.js";
 import usuariosRouter from "./src/routes/usuarios.routes.js";
+import reservasRouter from "./src/routes/reservas.routes.js";
 import "./src/databases/database.js";
 
 const app = express();
@@ -28,3 +29,4 @@ app.use(express.static(path.join(__dirname, "/public")));
 //3 - Configuramos las rutas
 app.use("/api", habitacionesRouter);
 app.use("/api", usuariosRouter);
+app.use("/api", reservasRouter);
