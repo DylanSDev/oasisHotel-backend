@@ -69,6 +69,8 @@ export const crearReserva = async (req, res) => {
     const fechaCheckIn = new Date(checkIn);
     const fechaCheckOut = new Date(checkOut);
 
+    console.log("Checkin: " + fechaCheckIn + " Checkout: " + fechaCheckOut);
+
     // Buscar habitaciones disponibles del tipo solicitado
     const habitacionesDisponibles = await Habitacion.find({
       type: type,
@@ -140,5 +142,52 @@ export const eliminarReserva = async (req, res) => {
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: "Hubo un error al eliminar la reserva" });
+  }
+};
+
+export const verificarDisponibilidad = async (req, res) => {
+  try {
+    const { type, checkIn, checkOut } = req.query;
+
+    // Validación de los datos recibidos
+    if (!type || !checkIn || !checkOut) {
+      return res
+        .status(400)
+        .json({ message: "Todos los campos son obligatorios" });
+    }
+
+    // Convertir las fechas de string a objetos Date
+    const fechaCheckIn = new Date(checkIn);
+    const fechaCheckOut = new Date(checkOut);
+
+    // Buscar habitaciones disponibles del tipo solicitado
+    const habitacionesDisponibles = await Habitacion.find({
+      type: type,
+      _id: {
+        $nin: await Reserva.distinct("idRoom", {
+          $or: [
+            {
+              checkIn: { $lt: fechaCheckOut },
+              checkOut: { $gt: fechaCheckIn },
+            },
+            { checkIn: { $gte: fechaCheckIn, $lt: fechaCheckOut } },
+            { checkOut: { $gt: fechaCheckIn, $lte: fechaCheckOut } },
+          ],
+        }),
+      },
+    });
+
+    const isAvailable = habitacionesDisponibles.length > 0;
+
+    res.status(200).json({
+      isAvailable,
+      availableRooms: habitacionesDisponibles.length,
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({
+      message: "Error al verificar la disponibilidad",
+      error: error.message,
+    });
   }
 };
