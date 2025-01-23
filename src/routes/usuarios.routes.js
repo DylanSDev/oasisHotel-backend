@@ -5,6 +5,7 @@ import {
   eliminarUsuario,
   suspenderUsuario,
   editarUsuario,
+  login,
 } from "../controllers/usuarios.controllers.js";
 import validacionUsuarioCrear from "../helpers/validacionUsuarioCrear.js";
 import validacionUsuarioEditar from "../helpers/validacionUsuarioEditar.js";
@@ -21,4 +22,5 @@ router
   .delete(eliminarUsuario)
   .put(validacionUsuarioEditar, editarUsuario);
 router.route("/usuarios/:id/suspend").put(suspenderUsuario);
+router.route("/usuarios/login").post(login);
 export default router;

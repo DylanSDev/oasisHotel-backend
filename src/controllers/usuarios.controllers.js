@@ -119,3 +119,42 @@ export const editarUsuario = async (req, res) => {
       .json({ message: "Error al editar el usuario", error: error.message });
   }
 };
+
+//Login
+export const login = async (req, res) => {
+  try {
+    const { email, password } = req.body;
+
+    if (!email || !password) {
+      return res
+        .status(400)
+        .json({ message: "Email y contraseña son requeridos." });
+    }
+
+    const usuarioBuscado = await Usuario.findOne({ email: email });
+    if (!usuarioBuscado) {
+      return res.status(401).json({ message: "Correo o password incorrecto." });
+    }
+
+    //Verificamos el password
+    const passwordValido = bcrypt.compareSync(
+      password,
+      usuarioBuscado.password
+    );
+
+    if (!passwordValido) {
+      return res.status(401).json({ message: "Correo o password incorrecto." });
+    }
+
+    res.status(200).json({
+      mensaje: "Usuario logueado exitosamente.",
+      nombreUsuario: usuarioBuscado.name,
+      emailUsuario: usuarioBuscado.email,
+    });
+  } catch (error) {
+    res.status(500).json({
+      message: "Error al intentar loguear un usuario.",
+      error: error.message,
+    });
+  }
+};
