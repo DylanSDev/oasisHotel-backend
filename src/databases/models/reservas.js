@@ -11,18 +11,19 @@ const reservaSchema = new Schema({
     ref: "habitacion",
     required: true,
   },
-  startDate: {
+  checkIn: {
     type: Date,
     required: true,
   },
-  endDate: {
+  checkOut: {
     type: Date,
     required: true,
     validate: {
       validator: function (value) {
-        return value > this.startDate;
+        return value > this.checkIn;
       },
-      message: "La fecha de fin debe ser posterior a la fecha de inicio.",
+      message:
+        "La fecha de check-out debe ser posterior a la fecha de check-in.",
     },
   },
 });
