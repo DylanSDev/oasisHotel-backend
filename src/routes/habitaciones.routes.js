@@ -23,7 +23,10 @@ router
 
 router
   .route("/habitaciones/:id")
-  .delete(eliminarHabitacion)
-  .put(upload.single("image"), validacionEditarHabitacion, editarHabitacion);
+  .delete(validarJWT, eliminarHabitacion)
+  .put(
+    [validarJWT, upload.single("image"), validacionCrearHabitacion],
+    editarHabitacion
+  );
 
 export default router;

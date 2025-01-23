@@ -22,9 +22,9 @@ export const listarHabitaciones = async (req, res) => {
 export const crearHabitacion = async (req, res) => {
   try {
     const { number, type, price, startDate, endDate } = req.body;
-    const email = req.userEmail;
 
     // Necesitamos buscar en Usuarios si el email le pertenece a un administrador
+    const email = req.userEmail;
     const administradorBuscado = await Usuario.findOne({ email });
 
     if (!administradorBuscado) {
@@ -100,6 +100,22 @@ export const eliminarHabitacion = async (req, res) => {
   try {
     const { id } = req.params; // Obtenemos el id de los parámetros de la ruta
 
+    // Necesitamos buscar en Usuarios si el email le pertenece a un administrador
+    const email = req.userEmail;
+    const administradorBuscado = await Usuario.findOne({ email });
+
+    if (!administradorBuscado) {
+      return res
+        .status(404)
+        .json({ message: "Usuario no encontrado. Acceso no autorizado." });
+    }
+
+    if (administradorBuscado.role !== "admin") {
+      return res
+        .status(401)
+        .json({ message: "El usuario no tiene permisos para esta acción." });
+    }
+
     // Intentamos encontrar y eliminar la habitación por su id
     const habitacionEliminada = await Habitacion.findByIdAndDelete(id);
 
@@ -125,6 +141,22 @@ export const editarHabitacion = async (req, res) => {
     const { number, type, price, startDate, endDate } = req.body;
 
     const updatedHabitacion = { number, type, price, startDate, endDate };
+
+    // Necesitamos buscar en Usuarios si el email le pertenece a un administrador
+    const email = req.userEmail;
+    const administradorBuscado = await Usuario.findOne({ email });
+
+    if (!administradorBuscado) {
+      return res
+        .status(404)
+        .json({ message: "Usuario no encontrado. Acceso no autorizado." });
+    }
+
+    if (administradorBuscado.role !== "admin") {
+      return res
+        .status(401)
+        .json({ message: "El usuario no tiene permisos para esta acción." });
+    }
 
     // Si se envía un archivo nuevo, súbelo a Cloudinary
     if (req.file) {
