@@ -69,8 +69,6 @@ export const crearReserva = async (req, res) => {
     const fechaCheckIn = new Date(checkIn);
     const fechaCheckOut = new Date(checkOut);
 
-    console.log("Checkin: " + fechaCheckIn + " Checkout: " + fechaCheckOut);
-
     // Buscar habitaciones disponibles del tipo solicitado
     const habitacionesDisponibles = await Habitacion.find({
       type: type,
