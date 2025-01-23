@@ -7,6 +7,7 @@ import {
 } from "../controllers/habitaciones.controllers.js";
 import validacionEditarHabitacion from "../helpers/validacionEditarHabitacion.js";
 import validacionCrearHabitacion from "../helpers/validacionCrearHabitacion.js";
+import validarJWT from "../helpers/validarJWT.js";
 import upload from "../middlewares/upload.js";
 
 const router = express.Router();
@@ -15,7 +16,10 @@ const router = express.Router();
 router
   .route("/habitaciones")
   .get(listarHabitaciones)
-  .post(upload.single("image"), validacionCrearHabitacion, crearHabitacion);
+  .post(
+    [validarJWT, upload.single("image"), validacionCrearHabitacion],
+    crearHabitacion
+  );
 
 router
   .route("/habitaciones/:id")

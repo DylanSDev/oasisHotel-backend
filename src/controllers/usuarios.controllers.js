@@ -1,5 +1,6 @@
 import Usuario from "../databases/models/usuarios.js";
 import bcrypt, { hash } from "bcrypt";
+import generarJWT from "../helpers/generarJWT.js";
 
 export const listarUsuarios = async (req, res) => {
   try {
@@ -146,10 +147,14 @@ export const login = async (req, res) => {
       return res.status(401).json({ message: "Correo o password incorrecto." });
     }
 
+    //Generamos el token con jwt
+    const token = await generarJWT(usuarioBuscado.name, usuarioBuscado.email);
+
     res.status(200).json({
       mensaje: "Usuario logueado exitosamente.",
       nombreUsuario: usuarioBuscado.name,
       emailUsuario: usuarioBuscado.email,
+      token,
     });
   } catch (error) {
     res.status(500).json({
