@@ -7,6 +7,7 @@ import {
   verificarDisponibilidad,
 } from "../controllers/reservas.controllers.js";
 import validacionReservaCrear from "../helpers/validacionReservaCrear.js";
+import validarJWT from "../helpers/validarJWT.js";
 
 const router = express.Router();
 
@@ -14,9 +15,11 @@ const router = express.Router();
 router
   .route("/reservas")
   .get(listarReservas)
-  .post(validacionReservaCrear, crearReserva);
+  .post([validarJWT, validacionReservaCrear], crearReserva);
 router.route("/reservas/usuario/:idUser").get(listarReservasPorUsuario);
-router.delete("/reservas/:id", eliminarReserva);
 router.get("/reservas/disponibilidad", verificarDisponibilidad);
+
+// Esta petición solo esta disponible desde el backend
+router.delete("/reservas/:id", eliminarReserva);
 
 export default router;
