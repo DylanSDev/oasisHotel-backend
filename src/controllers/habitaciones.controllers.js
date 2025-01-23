@@ -33,7 +33,7 @@ export const crearHabitacion = async (req, res) => {
         .json({ message: "Usuario no encontrado. Acceso no autorizado." });
     }
 
-    if (administradorBuscado.role !== "administrador") {
+    if (administradorBuscado.role !== "admin") {
       return res
         .status(401)
         .json({ message: "El usuario no tiene permisos para esta acción." });
