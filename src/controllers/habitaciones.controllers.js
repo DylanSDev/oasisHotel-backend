@@ -34,6 +34,13 @@ export const crearHabitacion = async (req, res) => {
       return res.status(400).json({ message: "Por favor, sube una imagen." });
     }
 
+    const allowedTypes = ["image/jpeg", "image/png", "image/jpg"];
+    if (!allowedTypes.includes(req.file.mimetype)) {
+      return res
+        .status(400)
+        .json({ message: "El archivo debe ser una imagen JPG, JPEG o PNG." });
+    }
+
     // Subir la imagen a Cloudinary
     const result = await new Promise((resolve, reject) => {
       const upload = cloudinary.uploader.upload_stream(
