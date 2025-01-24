@@ -25,7 +25,7 @@ export const listarReservasPorUsuario = async (req, res) => {
   try {
     const reservas = await Reserva.find({ idUser })
       .populate("idUser", "name email")
-      .populate("idRoom", "number type price");
+      .populate("idRoom", "number type price image");
 
     // Si no hay reservas, se devuelve un array vacío
     res.status(200).json(reservas);
