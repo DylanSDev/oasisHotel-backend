@@ -216,6 +216,7 @@ export const login = async (req, res) => {
       mensaje: "Usuario logueado exitosamente.",
       nombreUsuario: usuarioBuscado.name,
       emailUsuario: usuarioBuscado.email,
+      rolUsuario: usuarioBuscado.role,
       token,
     });
   } catch (error) {
