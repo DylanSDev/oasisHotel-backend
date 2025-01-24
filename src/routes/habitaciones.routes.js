@@ -25,7 +25,7 @@ router
   .route("/habitaciones/:id")
   .delete(validarJWT, eliminarHabitacion)
   .put(
-    [validarJWT, upload.single("image"), validacionCrearHabitacion],
+    [validarJWT, upload.single("image"), validacionEditarHabitacion],
     editarHabitacion
   );
 
